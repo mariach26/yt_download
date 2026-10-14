@@ -1,5 +1,5 @@
 import streamlit as st
-import youtube_dlp 
+import yt_dlp 
 import os
 
 
@@ -11,7 +11,7 @@ def download_yt_video(url,output_path='downloads'):
     final_filepath=None
 
     ydl_opts={
-        'format': 'best',
+        'format': 'bestvideo+bestaudio/best',
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
         'noplaylist': True,
         'writedescription': False,
@@ -23,12 +23,12 @@ def download_yt_video(url,output_path='downloads'):
     try:
         st.info(f"Currently given URL: {url}") #shows url
         with st.spinner('Downloading the video'): #downloads
-            with youtube_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info_dict=ydl.extract_info(url, download=True) #metadata from url
                 final_filepath= ydl.prepare_filename(info_dict) #gives final filepath
         st.success("Download complete on the server.")
         return final_filepath
-    except youtube_dlp.utils.DownloadError as de:
+    except yt_dlp.utils.DownloadError as de:
         st.error(de)
         return None
     except Exception as e:

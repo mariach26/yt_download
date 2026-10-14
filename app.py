@@ -2,7 +2,7 @@ import streamlit as st
 from dl_config import download_yt_video
 import os
 
-st.set_page_config(page_title='Youtube Video Downloades', page_icon= '📹', layout='wide')
+st.set_page_config(page_title='Youtube Video Downloader', page_icon= '📹', layout='wide')
 st.title('Youtube Video Downloader')
 st.caption('Enter Url in sidebar and press the button')
 
@@ -21,7 +21,7 @@ if video_url and button:
             st.download_button(
                 label='Click to download the video' ,
                 data=video_bytes,
-                file_name=file_names,
+                file_name="video.mp4",
                 mime='video/mp4'
             )
             st.success('Downloaded Video Successfully')
