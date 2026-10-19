@@ -1,5 +1,5 @@
 import streamlit as st
-from dl_config import download_yt_video
+from dl_config import process_download
 import os
 
 st.set_page_config(page_title='Youtube Video Downloader', page_icon= '📹', layout='wide')
@@ -8,26 +8,36 @@ st.caption('Enter Url in sidebar and press the button')
 
 video_url=st.sidebar.text_input('Enter video url: ')
 
-button=st.sidebar.button('Start download')
-if video_url and button:
-    download_file_path=download_yt_video(video_url)
-    if download_file_path:
-        try:
-            with open(download_file_path,'rb') as f:
-                video_bytes=f.read()
-            
-            file_name=os.path.basename(download_file_path)
+col1, col2 = st.sidebar.columns(2)
+btn_mp4 = col1.button('Get MP4')
+btn_mp3 = col2.button('Get MP3')
+if btn_mp4 or btn_mp3:
+    if not video_url:
+        st.warning('Please enter the url')
+    else:
+        selected_format = 'mp4' if btn_mp4 else 'mp3'
+        selected_mime = 'video/mp4' if btn_mp4 else 'audio/mpeg'
 
-            st.download_button(
-                label='Click to download the video' ,
-                data=video_bytes,
-                file_name="video.mp4",
-                mime='video/mp4'
-            )
-            st.success('Downloaded Video Successfully')
-            os.remove(download_file_path)
-        except Exception as e:
-            st.error(f'Could prepare the file {e}')
-else:
-    st.warning('Please enter the url')
-    
+        download_file_path = process_download(video_url, format_type=selected_format)
+        
+        if download_file_path:
+            try:
+                
+                with open(download_file_path, 'rb') as f:
+                    file_bytes = f.read()
+                
+                file_name = os.path.basename(download_file_path)
+
+                st.download_button(
+                    label=f'Click to download {selected_format.upper()}',
+                    data=file_bytes,
+                    file_name=file_name, 
+                    mime=selected_mime   
+                )
+                
+                st.success(f'Prepared {selected_format.upper()} Successfully!')
+                
+                #διαγραφη αρχειου απο σερβερ αφου φορτωθηκε στη μνημη
+                os.remove(download_file_path)
+            except Exception as e:
+                st.error(f'Could not prepare the file: {e}')
