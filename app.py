@@ -3,12 +3,14 @@ from dl_config import process_download
 import os
 import io
 from PyPDF2 import PdfWriter, PdfReader, PdfFileMerger
+from pdf2docx import Converter
+from docx2pdf import convert
 
 st.set_page_config(page_title='My Tools', page_icon= '🛠️', layout='wide')
 
 # main menu
 st.sidebar.title("Μενού Εργαλείων")
-app_mode = st.sidebar.selectbox("Επίλεξε εργαλείο:", ["YouTube Downloader", "PDF Split & Merge"])
+app_mode = st.sidebar.selectbox("Επίλεξε εργαλείο:", ["YouTube Downloader", "PDF Split & Merge","Μετατροπέας (PDF <-> Word)"])
 
 st.sidebar.markdown("---") 
 
@@ -140,3 +142,69 @@ elif app_mode == "PDF Split & Merge":
             )
         elif uploaded_files and len(uploaded_files) < 2:
             st.warning("Παρακαλώ ανέβασε τουλάχιστον 2 αρχεία.")
+    # ---------------------------------------------------------
+# ΕΡΓΑΛΕΙΟ 3: CONVERTER (PDF <-> WORD)
+# ---------------------------------------------------------
+elif app_mode == "Μετατροπέας (PDF <-> Word)":
+    st.title('Μετατροπέας Αρχείων 🔄')
+    
+    conversion_type = st.radio("Τι είδους μετατροπή θέλεις;", ["Από PDF σε Word", "Από Word σε PDF"])
+    
+    # --- PDF ΣΕ WORD ---
+    if conversion_type == "Από PDF σε Word":
+        st.caption("Ανέβασε αρχείο PDF για να το κάνεις επεξεργάσιμο έγγραφο Word (.docx).")
+        uploaded_file = st.file_uploader("Επίλεξε αρχείο PDF:", type="pdf")
+        
+        if uploaded_file and st.button("Μετατροπή σε Word"):
+            with st.spinner("Γίνεται μετατροπή σε Word, παρακαλώ περίμενε..."):
+                # Οι βιβλιοθήκες αυτές χρειάζονται τα αρχεία στον δίσκο για να δουλέψουν
+                with open("temp_in.pdf", "wb") as f:
+                    f.write(uploaded_file.getvalue())
+                    
+                # Μετατροπή
+                cv = Converter("temp_in.pdf")
+                cv.convert("temp_out.docx")
+                cv.close()
+                
+                # Διάβασμα νέου αρχείου για το κατέβασμα
+                with open("temp_out.docx", "rb") as f:
+                    docx_bytes = f.read()
+                    
+                # Καθάρισμα του δίσκου μας (όπως κάναμε στο YouTube)
+                os.remove("temp_in.pdf")
+                os.remove("temp_out.docx")
+                
+            st.success("Έτοιμο!")
+            st.download_button(
+                label="📥 Κατέβασμα Word", 
+                data=docx_bytes, 
+                file_name="converted_document.docx", 
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+            
+    # --- WORD ΣΕ PDF ---
+    elif conversion_type == "Από Word σε PDF":
+        st.caption("Ανέβασε αρχείο Word (.docx) για να το κάνεις PDF.")
+        uploaded_file = st.file_uploader("Επίλεξε αρχείο Word:", type="docx")
+        
+        if uploaded_file and st.button("Μετατροπή σε PDF"):
+            with st.spinner("Γίνεται μετατροπή σε PDF, παρακαλώ περίμενε..."):
+                with open("temp_in.docx", "wb") as f:
+                    f.write(uploaded_file.getvalue())
+                    
+                # Μετατροπή μέσω του docx2pdf
+                convert("temp_in.docx", "temp_out.pdf")
+                
+                with open("temp_out.pdf", "rb") as f:
+                    pdf_bytes = f.read()
+                    
+                os.remove("temp_in.docx")
+                os.remove("temp_out.pdf")
+                
+            st.success("Έτοιμο!")
+            st.download_button(
+                label="📥 Κατέβασμα PDF", 
+                data=pdf_bytes, 
+                file_name="converted_document.pdf", 
+                mime="application/pdf"
+            )
