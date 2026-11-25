@@ -41,7 +41,7 @@
 
 ### Βήματα
 
-1. **Κλωνοποίηση του αποθετηρίου:**
+1. **Κλωνοποίηση του repository:**
    ```bash
    git clone https://github.com/mariach26/yt_download.git
    cd yt_download
