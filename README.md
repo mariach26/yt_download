@@ -41,7 +41,42 @@
 
 ### Βήματα
 
-1. **Κλωνοποίηση του repository:**
+1. **Κλωνοποίηση του αποθετηρίου:**
    ```bash
-   git clone [https://github.com/mariach26/yt_download.git](https://github.com/mariach26/yt_download.git)
+   git clone https://github.com/mariach26/yt_download.git
    cd yt_download
+   ```
+
+2. **Δημιουργία και ενεργοποίηση εικονικού περιβάλλοντος (προτείνεται):**
+   ```bash
+   python -m venv venv
+   # Windows:
+   venv\Scripts\activate
+   # macOS / Linux:
+   source venv/bin/activate
+   ```
+
+3. **Εγκατάσταση εξαρτήσεων:**
+   ```bash
+   pip install streamlit yt-dlp PyPDF2 pdf2docx docx2pdf
+   ```
+   *(Ή `pip install -r requirements.txt` αν έχεις δημιουργήσει το αντίστοιχο αρχείο.)*
+
+4. **Εκτέλεση της εφαρμογής:**
+   ```bash
+   streamlit run app.py
+   ```
+
+Η εφαρμογή θα ανοίξει αυτόματα στον browser σου (συνήθως στο `http://localhost:8501`).
+
+---
+
+## 📁 Δομή Project
+
+```text
+yt_download/
+├── app.py              # Κύριο αρχείο της εφαρμογής Streamlit (UI & εργαλεία PDF/Word)
+├── dl_config.py        # Ρυθμίσεις yt-dlp και λογική λήψης βίντεο/ήχου
+├── downloads/          # Προσωρινός φάκελος λήψεων (δημιουργείται αυτόματα)
+└── README.md           # Τεκμηρίωση του project
+```
