@@ -60,7 +60,7 @@
    ```bash
    pip install streamlit yt-dlp PyPDF2 pdf2docx docx2pdf
    ```
-   *(Ή `pip install -r requirements.txt` αν έχεις δημιουργήσει το αντίστοιχο αρχείο.)*
+ 
 
 4. **Εκτέλεση της εφαρμογής:**
    ```bash
