@@ -71,7 +71,7 @@
 
 ---
 
-## 📁 Δομή Project
+##  Δομή Project
 
 ```text
 yt_download/
